@@ -25,7 +25,7 @@ public class LedgerRestController {
 
     @GetMapping("/ledger-desc")
     public List<Ledger> findAllByOrderByDateDesc() {
-        return ledgerService.findAllByOrderByDateDesc();
+        return ledgerService.findAllByOrderByDateDescAndById();
     }
 
     @GetMapping("/ledger-asc")

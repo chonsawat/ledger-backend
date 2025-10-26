@@ -1,10 +1,13 @@
 package com.example.app.demo.Account;
 
+import com.example.app.demo.Ledger.Ledger;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "account")

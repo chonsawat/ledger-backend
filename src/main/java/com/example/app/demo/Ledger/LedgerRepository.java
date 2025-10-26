@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface LedgerRepository extends JpaRepository <Ledger, Integer> {
     List<Ledger> findAllByOrderByDateDesc(Sort sort);
-    List<Ledger> findAllByOrderByDateDesc();
     List<Ledger> findAllByOrderByDate();
 }

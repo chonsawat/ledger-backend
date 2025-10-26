@@ -22,13 +22,8 @@ public class LedgerServiceImpl implements LedgerService {
     }
 
     @Override
-    public List<Ledger> findAllByOrderByDateDescAndByid() {
+    public List<Ledger> findAllByOrderByDateDescAndById() {
         return ledgerRepository.findAllByOrderByDateDesc(Sort.by(Sort.Direction.DESC, "id"));
-    }
-
-    @Override
-    public List<Ledger> findAllByOrderByDateDesc() {
-        return ledgerRepository.findAllByOrderByDateDesc();
     }
 
     @Override

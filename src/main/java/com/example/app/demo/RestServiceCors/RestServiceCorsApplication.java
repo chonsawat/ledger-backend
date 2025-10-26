@@ -10,11 +10,10 @@ public class RestServiceCorsApplication implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:5173")
+                .allowedOrigins("http://chonsawat:8081", "http://localhost:5173")
                 .allowedHeaders("*")
                 .allowCredentials(true)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
-
     }
 
 }

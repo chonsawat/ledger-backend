@@ -7,7 +7,6 @@ public interface LedgerService {
     List<Ledger> findAll();
     void save(Ledger ledger);
     List<Ledger> findAllByOrderByDate();
-    List<Ledger> findAllByOrderByDateDesc();
-    List<Ledger> findAllByOrderByDateDescAndByid();
+    List<Ledger> findAllByOrderByDateDescAndById();
     Optional<Ledger> findById(Integer id);
 }
