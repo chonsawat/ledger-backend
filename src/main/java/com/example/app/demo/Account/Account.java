@@ -2,6 +2,10 @@ package com.example.app.demo.Account;
 
 import com.example.app.demo.Ledger.Ledger;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -9,6 +13,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "account")
 public class Account {
@@ -24,54 +29,4 @@ public class Account {
     private BigDecimal previousBalance;
     @Column(name = "last_update_date")
     private LocalDate updateDate;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public BigDecimal getPreviousBalance() {
-        return previousBalance;
-    }
-
-    public void setPreviousBalance(BigDecimal previousBalance) {
-        this.previousBalance = previousBalance;
-    }
-
-    public LocalDate getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(LocalDate updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", desc='" + desc + '\'' +
-                ", balance=" + balance +
-                ", updateDate=" + updateDate +
-                '}';
-    }
 }
