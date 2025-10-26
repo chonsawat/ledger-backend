@@ -1,16 +1,19 @@
 package com.example.app.demo.Ledger;
 import com.example.app.demo.Account.Account;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Data
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(setterPrefix = "set")
 @Table(name="ledger")
 public class Ledger {
     @Id

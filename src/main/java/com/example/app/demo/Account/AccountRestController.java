@@ -18,7 +18,7 @@ public class AccountRestController {
 
     @GetMapping("/accounts")
     public List<Account> findAll() {
-        return accountRepository.findAll();
+        return accountRepository.findAllByOrderById();
     }
 
     @GetMapping("/account/{theId}")

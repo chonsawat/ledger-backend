@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface LedgerService {
     List<Ledger> findAll();
-    void save(Ledger ledger);
+    Ledger save(Ledger ledger);
     List<Ledger> findAllByOrderByDate();
     List<Ledger> findAllByOrderByDateDescAndById();
     Optional<Ledger> findById(Integer id);

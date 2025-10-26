@@ -32,8 +32,9 @@ public class LedgerServiceImpl implements LedgerService {
     }
 
     @Override
-    public void save(Ledger ledgerObj) {
+    public Ledger save(Ledger ledgerObj) {
         ledgerRepository.save(ledgerObj);
+        return ledgerObj;
     }
 
     @Override

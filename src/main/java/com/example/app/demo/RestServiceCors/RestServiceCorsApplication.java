@@ -12,7 +12,6 @@ public class RestServiceCorsApplication implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOrigins("http://chonsawat:8081", "http://localhost:5173")
                 .allowedHeaders("*")
-                .allowCredentials(true)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 
