@@ -38,6 +38,12 @@ public class LedgerServiceImpl implements LedgerService {
     }
 
     @Override
+    public Ledger deleteLedger(Ledger theLedger) {
+        ledgerRepository.delete(theLedger);
+        return theLedger;
+    }
+
+    @Override
     public Optional<Ledger> findById(Integer id) {
         return ledgerRepository.findById(id);
     }

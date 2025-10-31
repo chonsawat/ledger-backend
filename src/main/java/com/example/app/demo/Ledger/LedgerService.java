@@ -9,4 +9,5 @@ public interface LedgerService {
     List<Ledger> findAllByOrderByDate();
     List<Ledger> findAllByOrderByDateDescAndById();
     Optional<Ledger> findById(Integer id);
+    Ledger deleteLedger(Ledger theLedger);
 }
