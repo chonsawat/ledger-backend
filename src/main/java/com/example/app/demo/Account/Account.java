@@ -2,10 +2,7 @@ package com.example.app.demo.Account;
 
 import com.example.app.demo.Ledger.Ledger;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -15,6 +12,9 @@ import java.util.List;
 
 @Data
 @Entity
+@Builder(setterPrefix = "set")
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "account")
 public class Account {
     @Id
@@ -29,4 +29,6 @@ public class Account {
     private BigDecimal previousBalance;
     @Column(name = "last_update_date")
     private LocalDate updateDate;
+    @Column(name = "original_balance")
+    private BigDecimal original_balance;
 }
