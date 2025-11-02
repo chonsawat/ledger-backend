@@ -52,51 +52,23 @@ public class LedgerRestController {
     @PostMapping("/ledger")
     @Transactional
     public Ledger addLedger(@RequestBody Ledger reqLedger) {
-
-        System.out.println("Input");
-        System.out.println(reqLedger);
-
-        Account savedCreditAccount = null;
-        Account savedDebitAccount = null;
-
-        if (reqLedger.getCredit_account() != null) {
-            if (reqLedger.getCredit_amount().compareTo(BigDecimal.valueOf(0)) > 0) {
-                Optional<Account> creditAccount = accountRepository.findById(reqLedger.getCredit_account().getId());
-
-                if (creditAccount.isPresent()) {
-                    creditAccount.get().setPreviousBalance(creditAccount.get().getBalance());
-                    creditAccount.get().setBalance(creditAccount.get().getBalance().subtract(reqLedger.getCredit_amount()));
-                    creditAccount.get().setUpdateDate(reqLedger.getCredit_account().getUpdateDate());
-                    savedCreditAccount = accountRepository.save(creditAccount.get());
-                    System.out.println("Credit: " + savedCreditAccount);
-                }
-            }
-        }
-
-        if (reqLedger.getDebit_account() != null) {
-            if (reqLedger.getDebit_amount().compareTo(BigDecimal.valueOf(0)) > 0 ) {
-                Optional<Account> debitAccount = accountRepository.findById(reqLedger.getDebit_account().getId());
-
-                if (debitAccount.isPresent()) {
-                    debitAccount.get().setPreviousBalance(debitAccount.get().getBalance());
-                    debitAccount.get().setBalance(debitAccount.get().getBalance().add(reqLedger.getDebit_amount()));
-                    debitAccount.get().setUpdateDate(reqLedger.getDebit_account().getUpdateDate());
-                    savedDebitAccount = accountRepository.save(debitAccount.get());
-                    System.out.println("Debit: " + savedDebitAccount);
-                }
-            }
-        }
-
-
         Ledger newLedger = Ledger.builder()
                 .setDate(reqLedger.getDate())
                 .setDescription(reqLedger.getDescription())
-                .setCredit_account(savedCreditAccount)
                 .setCredit_amount(reqLedger.getCredit_amount())
-                .setDebit_account(savedDebitAccount)
                 .setDebit_amount(reqLedger.getDebit_amount())
-                .setCurrency_type("THB")
-                .build();
+                .setCurrency_type("THB").build();
+
+        var credit = reqLedger.getCredit_account();
+        var debit = reqLedger.getDebit_account();
+
+        if (credit != null) {
+            accountRepository.findById(credit.getId()).ifPresent(newLedger::setCredit_account);
+        }
+
+        if (debit != null) {
+            accountRepository.findById(debit.getId()).ifPresent(newLedger::setDebit_account);
+        }
 
         return ledgerService.save(newLedger);
     }
@@ -106,62 +78,34 @@ public class LedgerRestController {
     @Transactional
     public Ledger updateLedger(@RequestBody Ledger reqLedger) {
         Optional<Ledger> theLedger = ledgerService.findById(reqLedger.getId());
-        System.out.println("Before: ");
-        System.out.println(theLedger);
+        theLedger.ifPresent((Ledger ledger) -> {
 
-        Account savedCreditAccount = null;
-        Account savedDebitAccount = null;
+            Optional<Account> credit = null;
+            Optional<Account> debit = null;
 
-        if (reqLedger.getCredit_account() != null) {
-            if (reqLedger.getCredit_amount().compareTo(BigDecimal.valueOf(0)) > 0) {
-                Optional<Account> creditAccount = accountRepository.findById(reqLedger.getCredit_account().getId());
-
-                System.out.println(creditAccount);
-
-                if (creditAccount.isPresent()) {
-                    creditAccount.get().setPreviousBalance(creditAccount.get().getBalance());
-                    creditAccount.get().setBalance(creditAccount.get().getBalance().subtract(
-                            reqLedger.getCredit_amount().subtract(theLedger.get().getCredit_amount())
-                    ));
-                    creditAccount.get().setUpdateDate(reqLedger.getCredit_account().getUpdateDate());
-                    savedCreditAccount = accountRepository.save(creditAccount.get());
-                    System.out.println("Credit: " + savedCreditAccount);
-                }
+            if (reqLedger.getCredit_account() != null) {
+                credit = accountRepository.findById(reqLedger.getCredit_account().getId());
             }
-        }
 
-        if (reqLedger.getDebit_account() != null) {
-            if (reqLedger.getDebit_amount().compareTo(BigDecimal.valueOf(0)) > 0 ) {
-                Optional<Account> debitAccount = accountRepository.findById(reqLedger.getDebit_account().getId());
-
-                System.out.println(debitAccount);
-
-                if (debitAccount.isPresent()) {
-                    debitAccount.get().setPreviousBalance(debitAccount.get().getBalance());
-                    debitAccount.get().setBalance(debitAccount.get().getBalance().add(
-                            reqLedger.getDebit_amount().subtract(theLedger.get().getDebit_amount())
-                    ));
-                    debitAccount.get().setUpdateDate(reqLedger.getDebit_account().getUpdateDate());
-                    savedDebitAccount = accountRepository.save(debitAccount.get());
-                    System.out.println("Debit: " + savedDebitAccount);
-                }
+            if (reqLedger.getDebit_account() != null) {
+                debit = accountRepository.findById(reqLedger.getDebit_account().getId());
             }
-        }
 
-        if (theLedger.isEmpty()) {
-            throw new RuntimeException("Ledger record not found for update - " + reqLedger.getId());
-        } else {
             theLedger.get().setId(reqLedger.getId());
             theLedger.get().setDate(reqLedger.getDate());
             theLedger.get().setDescription(reqLedger.getDescription());
-            theLedger.get().setCredit_account(savedCreditAccount);
+            if (credit != null) {
+                credit.ifPresent((item) -> theLedger.get().setCredit_account(item));
+            }
             theLedger.get().setCredit_amount(reqLedger.getCredit_amount());
-            theLedger.get().setDebit_account(savedDebitAccount);
+            if (debit != null) {
+                debit.ifPresent((item) -> theLedger.get().setDebit_account(item));
+            }
             theLedger.get().setDebit_amount(reqLedger.getDebit_amount());
             theLedger.get().setCurrency_type("THB");
-            return ledgerService.save(theLedger.get());
-        }
-
+        });
+        theLedger.orElseThrow(() -> new RuntimeException("Ledger record not found for update - " + reqLedger.getId()));
+        return ledgerService.save(theLedger.get());
     }
 
     @DeleteMapping("/ledger")
