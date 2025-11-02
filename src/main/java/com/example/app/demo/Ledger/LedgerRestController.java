@@ -2,13 +2,14 @@ package com.example.app.demo.Ledger;
 
 import com.example.app.demo.Account.Account;
 import com.example.app.demo.Account.AccountRepository;
+import com.example.app.demo.LedgerDateGroup.LedgerDateGroup;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -175,5 +176,24 @@ public class LedgerRestController {
             ledgerService.deleteLedger(theLedger.get());
         }
         return new Ledger();
+    }
+
+    @GetMapping("/ledgerGroupByDate")
+    public TreeMap<LocalDate, List<Ledger>> findAllGroupByDate() {
+        List<Ledger> allLedger = ledgerService.findAll();
+        TreeMap<LocalDate, List<Ledger>> mapLedger = new TreeMap<>(Collections.reverseOrder());
+
+        allLedger.forEach((item) -> {
+            if (mapLedger.get(item.getDate()) == null) {
+                mapLedger.put(item.getDate(), new ArrayList<>());
+                mapLedger.get(item.getDate()).add(item);
+            } else {
+                mapLedger.get(item.getDate()).add(item);
+            }
+        });
+
+        System.out.println(mapLedger);
+
+        return mapLedger;
     }
 }
