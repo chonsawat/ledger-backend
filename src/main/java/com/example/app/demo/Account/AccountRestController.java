@@ -50,30 +50,6 @@ public class AccountRestController {
 
     @GetMapping("/account/{theId}")
     public Account findById(@PathVariable Integer theId) {
-
-        Optional<Account> account = accountRepository.findById(theId);
-
-        if (account.isEmpty()) {
-            throw new RuntimeException("Ledger not found - " + theId);
-        }
-
-        return account.get();
-    }
-
-    @PostMapping("/accounts")
-    public Account addAccount(@RequestBody Account theAccount) {
-        Account account = new Account();
-        account.setDesc(theAccount.getDesc());
-        account.setBalance(theAccount.getBalance());
-        account.setPreviousBalance(theAccount.getPreviousBalance());
-        account.setUpdateDate(LocalDate.now());
-
-        Account newAccount = accountRepository.save(account);
-        return newAccount;
-    }
-
-    @GetMapping("/temporary")
-    public Account getCreditAndDebitAmountById(@RequestParam Integer theId) {
         var ref = new Object() {
             BigDecimal totalCredit = BigDecimal.valueOf(0);
             BigDecimal totalDebit = BigDecimal.valueOf(0);
@@ -113,5 +89,17 @@ public class AccountRestController {
                 .setPreviousBalance(value.getBalance()));
         account.orElseThrow(() -> new RuntimeException("Accounts not Found"));
         return account.get();
+    }
+
+    @PostMapping("/accounts")
+    public Account addAccount(@RequestBody Account theAccount) {
+        Account account = new Account();
+        account.setDesc(theAccount.getDesc());
+        account.setBalance(theAccount.getBalance());
+        account.setPreviousBalance(theAccount.getPreviousBalance());
+        account.setUpdateDate(LocalDate.now());
+
+        Account newAccount = accountRepository.save(account);
+        return newAccount;
     }
 }
