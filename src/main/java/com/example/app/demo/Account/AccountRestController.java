@@ -25,7 +25,7 @@ public class AccountRestController {
 
     @GetMapping("/accounts")
     public List<Account> findAll() {
-        List<Account> accountsList =  accountRepository.findAllByOrderById();
+        List<Account> accountsList = accountRepository.findAllByOrderById();
 
         var newAccountList = accountsList.stream().peek((account) -> {
             var itemData = findById(account.getId());
@@ -64,10 +64,10 @@ public class AccountRestController {
                 .toList();
 
         allCreditLedger.forEach((Ledger ledger) -> {
-                ref.totalCredit = ref.totalCredit.add(ledger.getCredit_amount());
+            ref.totalCredit = ref.totalCredit.add(ledger.getCredit_amount());
         });
         allDebitLedger.forEach((Ledger ledger) -> {
-                ref.totalDebit = ref.totalDebit.add(ledger.getDebit_amount());
+            ref.totalDebit = ref.totalDebit.add(ledger.getDebit_amount());
         });
 
         Optional<Account> account = accountRepository.findById(theId);
