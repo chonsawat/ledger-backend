@@ -3,17 +3,13 @@ package com.example.app.demo.Ledger;
 import com.example.app.demo.Account.Account;
 import com.example.app.demo.Account.AccountRepository;
 import com.example.app.demo.Ledger.DAO.DateLedgerGroup;
-import com.example.app.demo.LedgerDateGroup.LedgerDateGroup;
+
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/api")
 public class LedgerRestController {
@@ -79,34 +75,50 @@ public class LedgerRestController {
     @PatchMapping("/ledger")
     @Transactional
     public Ledger updateLedger(@RequestBody Ledger reqLedger) {
+        System.out.println("(updateLedger) Request: " + reqLedger);
+
         Optional<Ledger> theLedger = ledgerService.findById(reqLedger.getId());
         theLedger.ifPresent((Ledger ledger) -> {
 
-            Optional<Account> credit = null;
-            Optional<Account> debit = null;
+            Optional<Account> credit;
+            Optional<Account> debit;
 
             if (reqLedger.getCredit_account() != null) {
                 credit = accountRepository.findById(reqLedger.getCredit_account().getId());
+                credit.ifPresentOrElse((item) -> {
+                    theLedger.get().setCredit_account(item);
+                    theLedger.get().setCredit_amount(reqLedger.getCredit_amount());
+                }, () -> {
+                    theLedger.get().setCredit_account(reqLedger.getCredit_account());
+                    theLedger.get().setCredit_amount(reqLedger.getCredit_amount());
+                });
+            } else {
+                theLedger.get().setCredit_account(null);
+                theLedger.get().setCredit_amount(null);
             }
 
             if (reqLedger.getDebit_account() != null) {
                 debit = accountRepository.findById(reqLedger.getDebit_account().getId());
+                debit.ifPresentOrElse((item) -> {
+                    theLedger.get().setDebit_account(item);
+                    theLedger.get().setDebit_amount(reqLedger.getDebit_amount());
+                }, () -> {
+                    theLedger.get().setCredit_account(reqLedger.getDebit_account());
+                    theLedger.get().setDebit_amount(reqLedger.getDebit_amount());
+                });
+            } else {
+                theLedger.get().setDebit_account(null);
+                theLedger.get().setDebit_amount(null);
             }
 
             theLedger.get().setId(reqLedger.getId());
             theLedger.get().setDate(reqLedger.getDate());
             theLedger.get().setDescription(reqLedger.getDescription());
-            if (credit != null) {
-                credit.ifPresent((item) -> theLedger.get().setCredit_account(item));
-            }
-            theLedger.get().setCredit_amount(reqLedger.getCredit_amount());
-            if (debit != null) {
-                debit.ifPresent((item) -> theLedger.get().setDebit_account(item));
-            }
-            theLedger.get().setDebit_amount(reqLedger.getDebit_amount());
             theLedger.get().setCurrency_type("THB");
         });
         theLedger.orElseThrow(() -> new RuntimeException("Ledger record not found for update - " + reqLedger.getId()));
+
+        System.out.println("(updateLedger) Response: " + theLedger.get());
         return ledgerService.save(theLedger.get());
     }
 
@@ -114,14 +126,14 @@ public class LedgerRestController {
     @Transactional
     public Ledger deleteLedger(@RequestBody Ledger reqLedger) {
         Optional<Ledger> theLedger = ledgerService.findById(reqLedger.getId());
-        System.out.println(theLedger);
+        System.out.println("(deleteLedger) request: " + theLedger);
 
         if (theLedger.isEmpty()) {
             throw new RuntimeException("Ledger for delete not found");
         } else {
             ledgerService.deleteLedger(theLedger.get());
         }
-        return new Ledger();
+        return theLedger.get();
     }
 
     @GetMapping("/ledgerGroupByDate")
@@ -137,8 +149,6 @@ public class LedgerRestController {
                 mapLedger.get(item.getDate()).add(item);
             }
         });
-
-//        System.out.println(mapLedger);
 
         return mapLedger;
     }

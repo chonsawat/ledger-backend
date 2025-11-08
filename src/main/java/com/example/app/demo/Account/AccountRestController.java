@@ -36,7 +36,6 @@ public class AccountRestController {
             }
         }).toList();
 
-        System.out.println(newAccountList);
         return newAccountList;
     }
 
@@ -50,14 +49,14 @@ public class AccountRestController {
         List<Ledger> allLedger = ledgerService.findAll();
         List<Ledger> allCreditLedger = allLedger.stream()
                 .filter((Ledger item) -> {
-                    if (item.getCredit_account() != null)
+                    if (item.getCredit_account() != null && item.getCredit_amount() != null)
                         return Objects.equals(item.getCredit_account().getId(), theId);
                     return false;
                 })
                 .toList();
         List<Ledger> allDebitLedger = allLedger.stream()
                 .filter((Ledger item) -> {
-                    if (item.getDebit_account() != null)
+                    if (item.getDebit_account() != null && item.getDebit_amount() != null)
                         return Objects.equals(item.getDebit_account().getId(), theId);
                     return false;
                 })
