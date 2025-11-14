@@ -1,6 +1,5 @@
 package com.example.app.demo.Ledger;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +10,6 @@ import java.util.Optional;
 public class LedgerServiceImpl implements LedgerService {
     private final LedgerRepository ledgerRepository;
 
-    @Autowired
     public LedgerServiceImpl(LedgerRepository theLedger) {
         ledgerRepository = theLedger;
     }
@@ -33,18 +31,25 @@ public class LedgerServiceImpl implements LedgerService {
 
     @Override
     public Ledger save(Ledger ledgerObj) {
+        if (ledgerObj == null)
+            throw new RuntimeException("ledgerObj was null");
         ledgerRepository.save(ledgerObj);
         return ledgerObj;
     }
 
     @Override
     public Ledger deleteLedger(Ledger theLedger) {
+        if (theLedger == null) {
+           throw new RuntimeException("theLedger was null");
+        }
         ledgerRepository.delete(theLedger);
         return theLedger;
     }
 
     @Override
     public Optional<Ledger> findById(Integer id) {
+        if (id == null)
+            throw new RuntimeException("id was null");
         return ledgerRepository.findById(id);
     }
 }

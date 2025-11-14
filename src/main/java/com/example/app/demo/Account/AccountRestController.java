@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,18 +24,22 @@ public class AccountRestController {
 
     @GetMapping("/accounts")
     public List<Account> findAll() {
-        List<Account> accountsList = accountRepository.findAllByOrderById();
+        try {
+            List<Account> accountsList = accountRepository.findAllByOrderById();
 
-        var newAccountList = accountsList.stream().peek((account) -> {
-            var itemData = findById(account.getId());
-            if (itemData.getBalance() != null) {
-                account.setBalance(itemData.getBalance());
-            } else {
-                account.setBalance(BigDecimal.valueOf(0));
-            }
-        }).toList();
+            var newAccountList = accountsList.stream().peek((account) -> {
+                var itemData = findById(account.getId());
+                if (itemData.getBalance() != null) {
+                    account.setBalance(itemData.getBalance());
+                } else {
+                    account.setBalance(BigDecimal.valueOf(0));
+                }
+            }).toList();
 
-        return newAccountList;
+            return newAccountList;
+        } catch (Exception e) {
+            throw new RuntimeException("Exception: " + e);
+        }
     }
 
     @GetMapping("/account/{theId}")
@@ -69,6 +72,8 @@ public class AccountRestController {
             ref.totalDebit = ref.totalDebit.add(ledger.getDebit_amount());
         });
 
+        if (theId == null)
+            throw new RuntimeException("theId was null");
         Optional<Account> account = accountRepository.findById(theId);
         account.ifPresent(value -> {
             ref.accountDetail = Account.builder()
@@ -88,36 +93,48 @@ public class AccountRestController {
 
     @PostMapping("/accounts")
     public Account addAccount(@RequestBody Account theAccount) {
-        Account account = new Account();
-        account.setDesc(theAccount.getDesc());
-        account.setBalance(theAccount.getBalance());
-        account.setPreviousBalance(theAccount.getPreviousBalance());
-        account.setUpdateDate(LocalDate.now());
-        account.setOriginal_balance(theAccount.getOriginal_balance());
-        return accountRepository.save(account);
+        try {
+            Account account = new Account();
+            account.setDesc(theAccount.getDesc());
+            account.setBalance(theAccount.getBalance());
+            account.setPreviousBalance(theAccount.getPreviousBalance());
+            account.setUpdateDate(LocalDate.now());
+            account.setOriginal_balance(theAccount.getOriginal_balance());
+            return accountRepository.save(account);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception: " + e);
+        }
     }
 
     @DeleteMapping("/accounts")
     public Account deleteAccount(@RequestBody Account req) {
-        Optional<Account> account = accountRepository.findById(req.getId());
-        account.orElseThrow(() -> new RuntimeException("Account not found"));
-        account.ifPresent(accountRepository::delete);
-        return account.get();
+        try {
+            Optional<Account> account = accountRepository.findById(req.getId());
+            account.orElseThrow(() -> new RuntimeException("Account not found"));
+            account.ifPresent(accountRepository::delete);
+            return account.get();
+        } catch (Exception e) {
+            throw new RuntimeException("theId was null");
+        }
     }
 
     @PutMapping("/accounts")
     public Account updateAccount(@RequestBody Account req) {
-        Optional<Account> account = accountRepository.findById(req.getId());
-        account.orElseThrow(() -> new RuntimeException("Account not found"));
-        account.ifPresent(item -> {
-            account.get().setDesc(req.getDesc());
-            account.get().setOriginal_balance(req.getOriginal_balance());
-            account.get().setBalance(req.getBalance());
-            account.get().setPreviousBalance(req.getPreviousBalance());
-            account.get().setUpdateDate(LocalDate.now());
+        try {
+            Optional<Account> account = accountRepository.findById(req.getId());
+            account.orElseThrow(() -> new RuntimeException("Account not found"));
+            account.ifPresent(item -> {
+                account.get().setDesc(req.getDesc());
+                account.get().setOriginal_balance(req.getOriginal_balance());
+                account.get().setBalance(req.getBalance());
+                account.get().setPreviousBalance(req.getPreviousBalance());
+                account.get().setUpdateDate(LocalDate.now());
 
-            accountRepository.save(account.get());
-        });
-        return req;
+                accountRepository.save(account.get());
+            });
+            return req;
+        } catch (Exception e) {
+            throw new RuntimeException("Exception: " + e);
+        }
     }
 }

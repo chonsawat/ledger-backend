@@ -1,14 +1,18 @@
 package com.example.app.demo.Account;
 
-import com.example.app.demo.Ledger.Ledger;
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
@@ -31,4 +35,5 @@ public class Account {
     private LocalDate updateDate;
     @Column(name = "original_balance")
     private BigDecimal original_balance;
+    private String category;
 }

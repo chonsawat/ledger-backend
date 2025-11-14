@@ -61,6 +61,8 @@ public class LedgerRestController {
         var debit = reqLedger.getDebit_account();
 
         if (credit != null) {
+            if (credit.getId() == null)
+                throw new RuntimeException("credit.getId() was null");
             accountRepository.findById(credit.getId()).ifPresent(newLedger::setCredit_account);
         }
 
