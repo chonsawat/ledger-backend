@@ -24,7 +24,6 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboardTotal")
-    // @GetMapping("/mob")
     public Object summaryByTotal() {
         var ref = new Object() {
             BigDecimal totalCredit = BigDecimal.valueOf(0);
@@ -49,5 +48,7 @@ public class DashboardController {
         data.put("totalDebit", ref.totalDebit);
         return data;
     }
+
+    
     
 }

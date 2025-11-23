@@ -21,7 +21,7 @@ import com.example.app.demo.Account.Account;
 import com.example.app.demo.Account.AccountRepository;
 import com.example.app.demo.Error.ErrorRestResponseException;
 import com.example.app.demo.Ledger.DAO.DateLedgerGroup;
-import com.example.app.demo.LedgerDateGroup.LedgerDateGroup;
+import com.example.app.demo.Ledger.Record.FindLedgerByDateRequest;
 
 import jakarta.transaction.Transactional;
 
@@ -237,5 +237,15 @@ public class LedgerRestController {
         if (data == null)
             throw new ErrorRestResponseException("Data not found");
         return data;
+    }
+
+    @GetMapping("/ledgerByDate")
+    public List<Ledger> findLedgerByDate(@RequestBody FindLedgerByDateRequest reqBody) {
+        try {
+            var data = ledgerRepository.findAllByDate(reqBody.date());
+            return data;
+        } catch (Exception e) {
+            throw new ErrorRestResponseException(e.toString());
+        }
     }
 }
