@@ -35,5 +35,4 @@ public class Account {
     private LocalDate updateDate;
     @Column(name = "original_balance")
     private BigDecimal original_balance;
-    private String category;
 }

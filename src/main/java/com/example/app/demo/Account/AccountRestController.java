@@ -1,7 +1,7 @@
 package com.example.app.demo.Account;
 
 import com.example.app.demo.Ledger.Ledger;
-import com.example.app.demo.Ledger.LedgerService;
+import com.example.app.demo.Ledger.LedgerRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -15,11 +15,11 @@ import java.util.Optional;
 public class AccountRestController {
 
     private final AccountRepository accountRepository;
-    private final LedgerService ledgerService;
+    private final LedgerRepository ledgerRepository;
 
-    public AccountRestController(AccountRepository accountRepository, LedgerService ledgerService) {
+    public AccountRestController(AccountRepository accountRepository, LedgerRepository ledgerRepository) {
         this.accountRepository = accountRepository;
-        this.ledgerService = ledgerService;
+        this.ledgerRepository = ledgerRepository;
     }
 
     @GetMapping("/accounts")
@@ -49,7 +49,7 @@ public class AccountRestController {
             BigDecimal totalDebit = BigDecimal.valueOf(0);
             Account accountDetail = new Account();
         };
-        List<Ledger> allLedger = ledgerService.findAll();
+        List<Ledger> allLedger = ledgerRepository.findAll();
         List<Ledger> allCreditLedger = allLedger.stream()
                 .filter((Ledger item) -> {
                     if (item.getCredit_account() != null && item.getCredit_amount() != null)
